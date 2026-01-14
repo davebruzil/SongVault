@@ -1,157 +1,176 @@
-David: Auth + Profile + Music APIs
-Authentication Flow
+# SongVault
 
-LoginFragment - Email/password form, validation, error states
-RegisterFragment - New user signup with validation
-SplashFragment - Check auth state, route to login or feed
-AuthViewModel - Login/register/logout logic, auth state LiveData
-UserRepository - Firebase Auth integration, Firestore sync, Room caching
-UserDao + UserEntity - Local user storage and queries
+**A social music sharing platform for Android** — share tracks from Spotify & YouTube with genre-based discovery.
 
-Profile System
+---
 
-ProfileFragment - Display user info, profile pic, stats, logout
-EditProfileFragment - Update username, change profile picture, select genres
-ProfileViewModel - Load/update profile, handle image upload
-UserRepository (extend) - Update Firestore + Room, handle profile images
-ImageRepository - Download images, save to device cache, store paths in Room
-ImageCacheDao + ImageCacheEntity - Track cached images, file paths, expiry
+## Team Split
 
-Music API Integration
+**David** — Auth, Profile, Music APIs, My Posts  
+**Dan** — Feed, Post Creation, Post Detail, Genres
 
-SpotifyApiService - OAuth flow, search tracks, get metadata, extract album art
-YouTubeApiService - API key auth, get video details, extract thumbnails
-LinkParser - Detect Spotify vs YouTube, extract track/video IDs
-MusicApiRepository - Unified API interface, rate limiting, error handling
-SearchFragment - Search bar, results list, click to select track
-SearchViewModel - Search with debounce, display results, handle loading
+---
 
-My Posts Management
+## David's Scope
 
-MyPostsFragment - Grid layout, show user's posts, edit/delete actions
-MyPostsViewModel - Load user posts, handle delete
-PostViewModel (partial) - Load single post, update post
-PostRepository (partial) - Query by userId, delete from Room + Firestore, update logic
+### Authentication
+- **`LoginFragment`** — email/password form, validation, error states
+- **`RegisterFragment`** — new user signup with validation
+- **`SplashFragment`** — check auth state, route to login or feed
+- **`AuthViewModel`** — login/register/logout logic, auth state LiveData
+- **`UserRepository`** — Firebase Auth integration, Firestore sync, Room caching
+- **`UserDao`** / **`UserEntity`** — local user storage
 
+### Profile
+- **`ProfileFragment`** — display user info, profile pic, stats, logout
+- **`EditProfileFragment`** — update username, profile picture, genres
+- **`ProfileViewModel`** — load/update profile, handle image upload
+- **`ImageRepository`** — download images, cache locally, store paths in Room
+- **`ImageCacheDao`** / **`ImageCacheEntity`** — track cached images
 
-Dan: Feed + Post Creation + Discovery
-Project Foundation (Both)
+### Music APIs
+- **`SpotifyApiService`** — OAuth flow, search tracks, get metadata, album art
+- **`YouTubeApiService`** — API key auth, video details, thumbnails
+- **`LinkParser`** — detect Spotify vs YouTube, extract IDs
+- **`MusicApiRepository`** — unified interface, rate limiting, error handling
+- **`SearchFragment`** — search bar, results list
+- **`SearchViewModel`** — debounced search, loading states
 
-Android project setup, dependencies (Retrofit, Room, Navigation, Firebase)
-Firebase Console setup (Auth, Firestore)
-Navigation Graph - All destinations and actions defined
-Room Database - UserEntity, PostEntity, ImageCacheEntity schemas
-BaseFragment + BaseViewModel - Shared base classes
+### My Posts
+- **`MyPostsFragment`** — grid layout, edit/delete actions
+- **`MyPostsViewModel`** — load user posts, handle delete
+- **`PostViewModel`** *(partial)* — load/update single post
+- **`PostRepository`** *(partial)* — query by userId, delete ops
 
-Feed System
+---
 
-FeedFragment - RecyclerView feed, pull-to-refresh, genre chips
-PostAdapter - ViewHolder for post cards, click handling
-FeedViewModel - AllPosts LiveData, progressive loading (cache → network)
-PostRepository - Fetch Firestore, cache in Room, query by genre
-PostDao + PostEntity - getAllPostsWithUsers(), getPostsByGenre()
-PostWithUser - Relation class joining posts with user data
+## Dan's Scope
 
-Post Creation
+### Feed
+- **`FeedFragment`** — RecyclerView, pull-to-refresh, genre chips
+- **`PostAdapter`** — ViewHolder for post cards
+- **`FeedViewModel`** — AllPosts LiveData, progressive loading (cache → network)
+- **`PostRepository`** — Firestore fetch, Room cache, genre queries
+- **`PostDao`** / **`PostEntity`** — `getAllPostsWithUsers()`, `getPostsByGenre()`
+- **`PostWithUser`** — relation class joining posts with user data
 
-CreatePostFragment - Link input, auto-fetch button, title/artist fields, genre picker, description, image preview
-PostViewModel - createPost(), autoFetchMetadata(), field validation
-PostRepository (extend) - Save to Room + Firestore, offline queue, download cover images
-Integration with MusicApiRepository (David's code) for auto-fetch
-Integration with ImageRepository (David's code) for caching
+### Post Creation
+- **`CreatePostFragment`** — link input, auto-fetch, title/artist fields, genre picker
+- **`PostViewModel`** — `createPost()`, `autoFetchMetadata()`, validation
+- **`PostRepository`** *(extend)* — save to Room + Firestore, offline queue
 
-Post Detail
+### Post Detail
+- **`PostDetailFragment`** — cover art, song info, edit/delete buttons
+- **`PostDetailViewModel`** — load post + author, check ownership
+- **`Safe Args`** — pass postId between screens
 
-PostDetailFragment - Large cover art, song info, description, edit/delete buttons
-PostDetailViewModel - Load post + author, check ownership
-Safe Args - Pass postId from Feed → Detail → Edit
+### Genres
+- **`Genre`** enum — Rock, Metal, Pop, Hip-Hop, Indie, etc.
+- **`GenreFilterBottomSheet`** — chip group, "All" option
+- **`FeedViewModel`** — `filterByGenre()` logic
 
-Genre System
+### Trending *(optional)*
+- **`TrendingFragment`** — API trending songs, badge
+- **`TrendingViewModel`** — load from MusicApiRepository
 
-Genre enum - Hardcoded list (Rock, Metal, Pop, Hip-Hop, Indie, etc.)
-GenreFilterBottomSheet - Chip group, "All" option
-FeedViewModel (extend) - filterByGenre() logic
+---
 
-Trending (Optional)
+## Shared
 
-TrendingFragment - Display API trending songs, "Trending" badge
-TrendingViewModel - Load trending from MusicApiRepository (David's code)
+- Project setup — Retrofit, Room, Navigation, Firebase
+- Navigation Graph — all destinations defined
+- Room Database — `UserEntity`, `PostEntity`, `ImageCacheEntity`
+- **`BaseFragment`** / **`BaseViewModel`** — shared base classes
+- Bottom Navigation, Background Sync
 
-Infrastructure
+---
 
-Bottom Navigation - Wire up Feed, Search, MyPosts, Profile tabs
-Background Sync - Queue unsynced posts, retry on network restore
-Testing - Progressive loading, post creation, genre filter, API integration
+## Structure
 
+```
+app/
+├── ui/
+│   ├── auth/           # David
+│   ├── profile/        # David
+│   ├── search/         # David
+│   ├── myposts/        # David
+│   ├── feed/           # Dan
+│   └── post/           # Dan
+├── data/
+│   ├── local/          # Shared
+│   ├── remote/api/     # David
+│   └── repository/     # Dan
+└── domain/models/      # Shared
+```
 
-Shared Responsibilities
-Both David & Dan
+---
 
-Daily 5-min sync - Progress check, blockers, handoffs
-Code reviews - Review each other's PRs before merge
-Integration testing - Test complete flows together
-Bug fixes - Pair on critical issues
-Git hygiene - Clean commits, meaningful messages, feature branches
-Documentation - README, setup instructions, API keys guide
+## Git
 
-
-Integration Points
-Week 2 Handoff
-David → Dan: MusicApiRepository interface, ImageRepository interface
-Dan → David: PostRepository interface, Room schema finalized
-Week 4 Handoff
-David → Dan: Working Spotify/YouTube APIs, SearchFragment ready
-Dan → David: Feed with mock data, PostRepository skeleton
-Week 6 Integration
-Both: Merge branches, wire CreatePost to MusicApiRepository, test end-to-end
-
-Git Strategy
+```
 main
-  └── develop
-      ├── feature/david-auth
-      ├── feature/david-profile  
-      ├── feature/david-music-api
-      ├── feature/david-my-posts
-      ├── feature/dan-feed
-      ├── feature/dan-post-creation
-      └── feature/dan-genres
-Ownership:
-David: ui/auth/, ui/profile/, ui/search/, ui/myposts/, data/remote/api/
-Dan: ui/feed/, ui/post/, data/repository/PostRepository.kt
-Shared: data/local/ (coordinate), domain/models/
+└── develop
+    ├── feature/david-auth
+    ├── feature/david-profile
+    ├── feature/david-music-api
+    ├── feature/david-my-posts
+    ├── feature/dan-feed
+    ├── feature/dan-post-creation
+    └── feature/dan-genres
+```
 
-Testing Split
-David Tests
+---
 
-Login/register/logout flows
-Auto-login on restart
-Profile updates (local + remote)
-Spotify API metadata extraction
-YouTube API metadata extraction
-Image caching (download → save → retrieve)
-Search functionality
-My Posts screen
-Edit/delete own posts
+## Handoffs
 
-Dan Tests
+**Week 2**
+- David → Dan: `MusicApiRepository` interface, `ImageRepository` interface
+- Dan → David: `PostRepository` interface, Room schema
 
-Feed displays all posts
-Progressive loading (cache → network)
-Pull-to-refresh
-Genre filtering
-Post creation (manual input)
-Post creation (auto-fetch via David's API)
-Post detail view
-Navigation with Safe Args
-Offline mode
-Background sync
+**Week 4**
+- David → Dan: Working Spotify/YouTube APIs, SearchFragment
+- Dan → David: Feed with mock data, PostRepository skeleton
 
-Both Test Together
+**Week 6**
+- Integration — merge branches, wire CreatePost to MusicApiRepository, E2E testing
 
-Complete user flow (register → search → create → view feed)
-Auto-fetch integration
-Image caching across screens
-No synchronous network calls
-All spinners working
-Error handling
-Claude is AI and can make mistakes. Please double-check responses.
+---
+
+## Tests
+
+**David**
+- Login/register/logout flows
+- Auto-login on restart
+- Profile updates (local + remote)
+- Spotify/YouTube metadata extraction
+- Image caching
+- Search functionality
+- My Posts CRUD
+
+**Dan**
+- Feed displays all posts
+- Progressive loading
+- Pull-to-refresh
+- Genre filtering
+- Post creation (manual + auto-fetch)
+- Post detail view
+- Safe Args navigation
+- Offline mode
+- Background sync
+
+**Both**
+- Full flow: register → search → create → feed
+- Auto-fetch integration
+- Image caching across screens
+- No sync network calls
+- Loading indicators
+- Error handling
+
+---
+
+## Stack
+
+- **Kotlin** / **MVVM** / **Hilt**
+- **Retrofit** / **Room** / **Jetpack Navigation**
+- **Firebase Auth** / **Firestore**
+- **Spotify API** / **YouTube API**
