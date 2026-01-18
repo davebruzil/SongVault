@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "498317743938",
+    "project_id": "song-vault-97b2c",
+    "storage_bucket": "song-vault-97b2c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:498317743938:android:0bdb5d2253552224af9adb",
+        "android_client_info": {
+          "package_name": "song.vault"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7H2m4oYOKueAeq2dKNRTRN47RTTmyoQ8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
