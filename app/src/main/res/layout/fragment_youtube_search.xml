@@ -94,12 +94,13 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- YouTube Player (visible for audio to work) -->
-            <FrameLayout
-                android:id="@+id/youtubePlayerContainer"
-                android:layout_width="match_parent"
-                android:layout_height="180dp"
-                android:background="@android:color/black" />
+            <!-- Loading indicator for audio extraction -->
+            <ProgressBar
+                android:id="@+id/playerProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone" />
 
             <!-- Song Info -->
             <TextView

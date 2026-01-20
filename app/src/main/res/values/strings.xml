@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SongVault</string>
+    <!-- TODO: Replace with actual Web Client ID from Firebase Console -->
+    <string name="default_web_client_id">PLACEHOLDER</string>
 </resources>

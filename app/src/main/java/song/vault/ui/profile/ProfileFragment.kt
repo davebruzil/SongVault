@@ -1,13 +1,16 @@
 package song.vault.ui.profile
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.squareup.picasso.Picasso
+import song.vault.MainActivity
 import song.vault.R
 import song.vault.SongVaultApplication
 import song.vault.databinding.FragmentProfileBinding
@@ -40,23 +43,21 @@ class ProfileFragment : Fragment() {
 
     private fun setupObservers() {
         profileViewModel.currentUser.observe(viewLifecycleOwner) { user ->
-            if (user == null) {
-                findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
-                return@observe
+            // Only update UI if user is not null
+            user?.let {
+                binding.tvDisplayName.text = it.displayName ?: "User"
+                binding.tvEmail.text = it.email
+
+                if (!it.profileImageUrl.isNullOrEmpty()) {
+                    Picasso.get()
+                        .load(it.profileImageUrl)
+                        .placeholder(R.drawable.ic_profile_placeholder)
+                        .error(R.drawable.ic_profile_placeholder)
+                        .into(binding.ivProfileImage)
+                }
+
+                profileViewModel.loadPostCount(it.uid)
             }
-
-            binding.tvDisplayName.text = user.displayName ?: "User"
-            binding.tvEmail.text = user.email
-
-            user.profileImageUrl?.let { url ->
-                Picasso.get()
-                    .load(url)
-                    .placeholder(R.drawable.ic_profile_placeholder)
-                    .error(R.drawable.ic_profile_placeholder)
-                    .into(binding.ivProfileImage)
-            }
-
-            profileViewModel.loadPostCount(user.uid)
         }
 
         profileViewModel.postCount.observe(viewLifecycleOwner) { count ->
@@ -78,7 +79,16 @@ class ProfileFragment : Fragment() {
         }
 
         binding.btnLogout.setOnClickListener {
+            // Logout and restart the app - most reliable way
             profileViewModel.logout()
+
+            // Restart MainActivity - splash will redirect to login
+            activity?.let { currentActivity ->
+                val intent = Intent(currentActivity, MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                currentActivity.finish()
+            }
         }
     }
 

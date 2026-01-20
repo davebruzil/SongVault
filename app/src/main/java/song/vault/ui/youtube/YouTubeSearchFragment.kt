@@ -13,17 +13,22 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
+import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.navigation.fragment.findNavController
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
-import com.squareup.picasso.Picasso
-import song.vault.R
 import song.vault.SongVaultApplication
 import song.vault.data.remote.youtube.YouTubeVideo
 import song.vault.databinding.FragmentYoutubeSearchBinding
+import song.vault.util.AudioExtractor
+import song.vault.util.Resource
+import kotlinx.coroutines.launch
 
+@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 class YouTubeSearchFragment : Fragment() {
 
     private var _binding: FragmentYoutubeSearchBinding? = null
@@ -35,22 +40,20 @@ class YouTubeSearchFragment : Fragment() {
     }
 
     private lateinit var adapter: YouTubeVideoAdapter
-    private var youTubePlayerView: YouTubePlayerView? = null
-    private var youTubePlayer: YouTubePlayer? = null
+    private var exoPlayer: ExoPlayer? = null
     private var currentVideo: YouTubeVideo? = null
-    private var isPlaying = false
-    private var playerReady = false
-    private var videoDuration = 0f
-    private var currentTime = 0f
-    private var isSeeking = false
+    private var isExtracting = false
 
     private val handler = Handler(Looper.getMainLooper())
     private val updateSeekBar = object : Runnable {
         override fun run() {
-            if (!isSeeking && videoDuration > 0) {
-                val progress = ((currentTime / videoDuration) * 100).toInt()
-                binding.seekBar.progress = progress
-                binding.tvCurrentTime.text = formatTime(currentTime)
+            exoPlayer?.let { player ->
+                if (player.isPlaying) {
+                    val duration = player.duration.coerceAtLeast(1L)
+                    val progress = ((player.currentPosition * 100) / duration).toInt()
+                    binding.seekBar.progress = progress
+                    binding.tvCurrentTime.text = formatTime(player.currentPosition)
+                }
             }
             handler.postDelayed(this, 1000)
         }
@@ -70,7 +73,6 @@ class YouTubeSearchFragment : Fragment() {
         setupToolbar()
         setupSearch()
         setupRecyclerView()
-        setupYouTubePlayer()
         setupPlayerControls()
         observeViewModel()
     }
@@ -108,141 +110,208 @@ class YouTubeSearchFragment : Fragment() {
         binding.rvVideos.adapter = adapter
     }
 
-    private fun setupYouTubePlayer() {
-        youTubePlayerView = YouTubePlayerView(requireContext()).apply {
-            addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
-                override fun onReady(player: YouTubePlayer) {
-                    Log.d("YouTubeSearch", "Player ready")
-                    youTubePlayer = player
-                    playerReady = true
-
-                    currentVideo?.let {
-                        player.loadVideo(it.videoId, 0f)
-                    }
-                }
-
-                override fun onStateChange(
-                    youTubePlayer: YouTubePlayer,
-                    state: PlayerConstants.PlayerState
-                ) {
-                    Log.d("YouTubeSearch", "State: $state")
-                    when (state) {
-                        PlayerConstants.PlayerState.PLAYING -> {
-                            isPlaying = true
-                            updatePlayPauseButton()
-                            handler.post(updateSeekBar)
-                        }
-                        PlayerConstants.PlayerState.PAUSED -> {
-                            isPlaying = false
-                            updatePlayPauseButton()
-                        }
-                        PlayerConstants.PlayerState.ENDED -> {
-                            isPlaying = false
-                            updatePlayPauseButton()
-                            handler.removeCallbacks(updateSeekBar)
-                        }
-                        else -> {}
-                    }
-                }
-
-                override fun onCurrentSecond(youTubePlayer: YouTubePlayer, second: Float) {
-                    currentTime = second
-                }
-
-                override fun onVideoDuration(youTubePlayer: YouTubePlayer, duration: Float) {
-                    videoDuration = duration
-                    binding.tvDuration.text = formatTime(duration)
-                }
-
-                override fun onError(
-                    youTubePlayer: YouTubePlayer,
-                    error: PlayerConstants.PlayerError
-                ) {
-                    Log.e("YouTubeSearch", "Player error: $error")
-                    Toast.makeText(context, "Cannot play this video", Toast.LENGTH_SHORT).show()
-                }
-            })
-        }
-
-        lifecycle.addObserver(youTubePlayerView!!)
-        binding.youtubePlayerContainer.addView(youTubePlayerView)
-    }
-
     private fun setupPlayerControls() {
         binding.btnPlayPause.setOnClickListener {
-            val player = youTubePlayer ?: return@setOnClickListener
-            if (isPlaying) {
-                player.pause()
-            } else {
-                player.play()
+            if (isExtracting) return@setOnClickListener
+
+            exoPlayer?.let { player ->
+                if (player.isPlaying) {
+                    player.pause()
+                } else {
+                    player.play()
+                    handler.post(updateSeekBar)
+                }
+                updatePlayPauseButton()
             }
         }
 
         binding.btnForward.setOnClickListener {
-            youTubePlayer?.let { player ->
-                val newTime = (currentTime + 10f).coerceAtMost(videoDuration)
-                player.seekTo(newTime)
+            exoPlayer?.let { player ->
+                val newPos = (player.currentPosition + 10000).coerceAtMost(player.duration)
+                player.seekTo(newPos)
             }
         }
 
         binding.btnRewind.setOnClickListener {
-            youTubePlayer?.let { player ->
-                val newTime = (currentTime - 10f).coerceAtLeast(0f)
-                player.seekTo(newTime)
+            exoPlayer?.let { player ->
+                val newPos = (player.currentPosition - 10000).coerceAtLeast(0)
+                player.seekTo(newPos)
             }
         }
 
         binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser && videoDuration > 0) {
-                    val seekTime = (progress / 100f) * videoDuration
-                    binding.tvCurrentTime.text = formatTime(seekTime)
+                if (fromUser) {
+                    exoPlayer?.let { player ->
+                        val seekPos = (progress * player.duration) / 100
+                        binding.tvCurrentTime.text = formatTime(seekPos)
+                    }
                 }
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                isSeeking = true
-            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                seekBar?.let {
-                    val seekTime = (it.progress / 100f) * videoDuration
-                    youTubePlayer?.seekTo(seekTime)
+                seekBar?.let { sb ->
+                    exoPlayer?.let { player ->
+                        val seekPos = (sb.progress * player.duration) / 100
+                        player.seekTo(seekPos)
+                    }
                 }
-                isSeeking = false
             }
         })
     }
 
     private fun updatePlayPauseButton() {
+        val isPlaying = exoPlayer?.isPlaying == true
         binding.btnPlayPause.setImageResource(
             if (isPlaying) android.R.drawable.ic_media_pause
             else android.R.drawable.ic_media_play
         )
     }
 
-    private fun formatTime(seconds: Float): String {
-        val mins = (seconds / 60).toInt()
-        val secs = (seconds % 60).toInt()
-        return "$mins:${secs.toString().padStart(2, '0')}"
+    private fun formatTime(millis: Long): String {
+        val secs = (millis / 1000).toInt()
+        val mins = secs / 60
+        val remainingSecs = secs % 60
+        return "$mins:${remainingSecs.toString().padStart(2, '0')}"
     }
 
     private fun playVideo(video: YouTubeVideo) {
-        currentVideo = video
-        currentTime = 0f
-        videoDuration = 0f
-        Log.d("YouTubeSearch", "Playing: ${video.title}")
+        Log.d("YouTubeSearch", "=== PLAY VIDEO CALLED ===")
+        Log.d("YouTubeSearch", "Video: ${video.title}")
+        Log.d("YouTubeSearch", "Video ID: ${video.videoId}")
 
-        // Update player UI
+        currentVideo = video
+        isExtracting = true
+
+        // Update UI
         binding.tvPlayerTitle.text = video.title
         binding.tvPlayerChannel.text = video.channelName
         binding.tvCurrentTime.text = "0:00"
-        binding.tvDuration.text = "0:00"
+        binding.tvDuration.text = "Loading..."
         binding.seekBar.progress = 0
+        binding.playerProgress.isVisible = true
+        updatePlayPauseButton()
 
-        if (playerReady) {
-            youTubePlayer?.loadVideo(video.videoId, 0f)
+        // Release previous player
+        releasePlayer()
+
+        // Check if yt-dlp is ready
+        val app = requireActivity().application as SongVaultApplication
+        if (!app.isYtDlpReady) {
+            Toast.makeText(context, "Audio extractor initializing...", Toast.LENGTH_SHORT).show()
+            binding.playerProgress.isVisible = false
+            isExtracting = false
+            return
         }
+
+        // Extract audio URL using yt-dlp
+        lifecycleScope.launch {
+            Log.d("YouTubeSearch", "Extracting audio for: ${video.videoId}")
+
+            when (val result = AudioExtractor.extractAudioUrl(video.videoId)) {
+                is Resource.Success -> {
+                    val audioInfo = result.data
+                    Log.d("YouTubeSearch", "=== EXTRACTION SUCCESS ===")
+                    Log.d("YouTubeSearch", "Audio URL length: ${audioInfo.audioUrl.length}")
+                    playAudioUrl(audioInfo.audioUrl, audioInfo.headers)
+                }
+                is Resource.Error -> {
+                    Log.e("YouTubeSearch", "=== EXTRACTION FAILED ===")
+                    Log.e("YouTubeSearch", "Error: ${result.message}")
+                    Toast.makeText(context, "Failed: ${result.message}", Toast.LENGTH_LONG).show()
+                    binding.playerProgress.isVisible = false
+                    isExtracting = false
+                }
+                is Resource.Loading -> {}
+            }
+        }
+    }
+
+    private fun playAudioUrl(audioUrl: String, headers: Map<String, String>) {
+        Log.d("YouTubeSearch", "=== STARTING EXOPLAYER ===")
+        Log.d("YouTubeSearch", "URL: ${audioUrl.take(100)}...")
+
+        try {
+            val ctx = context ?: return
+
+            // Log headers for debugging
+            Log.d("YouTubeSearch", "Using headers: $headers")
+
+            // Use User-Agent from yt-dlp headers (important for 403 prevention)
+            val userAgent = headers["User-Agent"] ?: "Mozilla/5.0"
+            Log.d("YouTubeSearch", "User-Agent: $userAgent")
+
+            // Create data source factory with exact headers from yt-dlp
+            val dataSourceFactory = DefaultHttpDataSource.Factory()
+                .setUserAgent(userAgent)
+                .setDefaultRequestProperties(headers)
+                .setConnectTimeoutMs(30000)
+                .setReadTimeoutMs(30000)
+                .setAllowCrossProtocolRedirects(true)
+
+            // Create media source
+            val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
+                .createMediaSource(MediaItem.fromUri(audioUrl))
+
+            // Create and configure ExoPlayer
+            exoPlayer = ExoPlayer.Builder(ctx).build().apply {
+                setMediaSource(mediaSource)
+
+                addListener(object : Player.Listener {
+                    override fun onPlaybackStateChanged(state: Int) {
+                        when (state) {
+                            Player.STATE_READY -> {
+                                Log.d("YouTubeSearch", "=== EXOPLAYER READY ===")
+                                Log.d("YouTubeSearch", "Duration: ${duration}ms")
+                                isExtracting = false
+                                binding.playerProgress.isVisible = false
+                                binding.tvDuration.text = formatTime(duration)
+                                play()
+                                handler.post(updateSeekBar)
+                                updatePlayPauseButton()
+                            }
+                            Player.STATE_ENDED -> {
+                                Log.d("YouTubeSearch", "Playback ended")
+                                binding.seekBar.progress = 100
+                                updatePlayPauseButton()
+                            }
+                            Player.STATE_BUFFERING -> {
+                                Log.d("YouTubeSearch", "Buffering...")
+                            }
+                            Player.STATE_IDLE -> {}
+                        }
+                    }
+
+                    override fun onIsPlayingChanged(isPlaying: Boolean) {
+                        updatePlayPauseButton()
+                    }
+
+                    override fun onPlayerError(error: PlaybackException) {
+                        Log.e("YouTubeSearch", "=== EXOPLAYER ERROR ===")
+                        Log.e("YouTubeSearch", "Error: ${error.message}")
+                        Log.e("YouTubeSearch", "Cause: ${error.cause?.message}")
+                        Toast.makeText(context, "Playback error: ${error.message}", Toast.LENGTH_LONG).show()
+                        isExtracting = false
+                        binding.playerProgress.isVisible = false
+                    }
+                })
+
+                prepare()
+            }
+        } catch (e: Exception) {
+            Log.e("YouTubeSearch", "Error creating ExoPlayer: ${e.message}", e)
+            Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            isExtracting = false
+            binding.playerProgress.isVisible = false
+        }
+    }
+
+    private fun releasePlayer() {
+        handler.removeCallbacks(updateSeekBar)
+        exoPlayer?.release()
+        exoPlayer = null
     }
 
     private fun observeViewModel() {
@@ -272,14 +341,14 @@ class YouTubeSearchFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
+        exoPlayer?.pause()
+        updatePlayPauseButton()
         handler.removeCallbacks(updateSeekBar)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        handler.removeCallbacks(updateSeekBar)
-        youTubePlayerView?.release()
-        youTubePlayerView = null
+        releasePlayer()
         _binding = null
     }
 }

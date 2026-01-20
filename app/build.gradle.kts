@@ -29,6 +29,11 @@ android {
 
         val youtubeApiKey = localProperties.getProperty("YOUTUBE_API_KEY") ?: ""
         buildConfigField("String", "YOUTUBE_API_KEY", "\"$youtubeApiKey\"")
+
+        // Cloudinary config
+        buildConfigField("String", "CLOUDINARY_CLOUD_NAME", "\"djxc4zhz0\"")
+        buildConfigField("String", "CLOUDINARY_API_KEY", "\"856925495614991\"")
+        buildConfigField("String", "CLOUDINARY_API_SECRET", "\"Sy0UEEZ_Wv2WRrZ2cosATeDif1g\"")
     }
 
     buildTypes {
@@ -53,6 +58,12 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
+    }
+
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
     }
 }
 
@@ -95,6 +106,9 @@ dependencies {
     // Picasso
     implementation("com.squareup.picasso:picasso:2.8")
 
+    // Cloudinary
+    implementation("com.cloudinary:cloudinary-android:2.5.0")
+
     // Retrofit & Gson for YouTube API
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
@@ -102,6 +116,15 @@ dependencies {
 
     // YouTube Android Player (IFrame API)
     implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.0")
+
+    // yt-dlp Android wrapper for audio extraction (latest version)
+    implementation("io.github.junkfood02.youtubedl-android:library:0.18.1")
+    implementation("io.github.junkfood02.youtubedl-android:ffmpeg:0.18.1")
+    implementation("io.github.junkfood02.youtubedl-android:aria2c:0.18.1")
+
+    // ExoPlayer for better audio streaming
+    implementation("androidx.media3:media3-exoplayer:1.2.1")
+    implementation("androidx.media3:media3-datasource-okhttp:1.2.1")
 
     // SwipeRefreshLayout
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
