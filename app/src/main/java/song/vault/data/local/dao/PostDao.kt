@@ -32,4 +32,16 @@ interface PostDao {
 
     @Query("DELETE FROM posts WHERE userId = :userId")
     suspend fun deleteUserPosts(userId: String)
+
+    @Query("SELECT * FROM posts ORDER BY createdAt DESC")
+    fun observeAllPosts(): Flow<List<PostEntity>>
+
+    @Query("SELECT * FROM posts WHERE genre = :genre ORDER BY createdAt DESC")
+    fun observePostsByGenre(genre: String): Flow<List<PostEntity>>
+
+    @Query("SELECT * FROM posts WHERE musicTitle LIKE :query OR musicArtist LIKE :query OR caption LIKE :query ORDER BY createdAt DESC")
+    fun searchPosts(query: String): Flow<List<PostEntity>>
+
+    @Query("SELECT DISTINCT genre FROM posts WHERE genre IS NOT NULL")
+    suspend fun getAvailableGenres(): List<String>
 }

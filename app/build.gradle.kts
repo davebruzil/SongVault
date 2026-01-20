@@ -88,9 +88,10 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:2.7.6")
 
     // Room
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
+    val roomVersion = "2.7.0-alpha11"
+    implementation("androidx.room:room-runtime:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+    kapt("androidx.room:room-compiler:$roomVersion")
 
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:32.7.0"))

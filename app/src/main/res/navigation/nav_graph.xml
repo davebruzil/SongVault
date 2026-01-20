@@ -63,6 +63,12 @@
         <action
             android:id="@+id/action_profileFragment_to_youtubeSearchFragment"
             app:destination="@id/youtubeSearchFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_feedFragment"
+            app:destination="@id/feedFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_trendingFragment"
+            app:destination="@id/trendingFragment" />
     </fragment>
 
     <fragment
@@ -79,5 +85,49 @@
         android:id="@+id/youtubeSearchFragment"
         android:name="song.vault.ui.youtube.YouTubeSearchFragment"
         android:label="Search Songs" />
+
+    <fragment
+        android:id="@+id/feedFragment"
+        android:name="song.vault.ui.feed.FeedFragment"
+        android:label="Feed">
+        <action
+            android:id="@+id/action_feed_to_post_detail"
+            app:destination="@id/postDetailFragment" />
+        <action
+            android:id="@+id/action_feed_to_create_post"
+            app:destination="@id/createPostFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/postDetailFragment"
+        android:name="song.vault.ui.postdetail.PostDetailFragment"
+        android:label="Post Details">
+        <argument
+            android:name="postId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_postDetail_to_createPost"
+            app:destination="@id/createPostFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/createPostFragment"
+        android:name="song.vault.ui.createpost.CreatePostFragment"
+        android:label="Create Post">
+        <argument
+            android:name="postId"
+            app:argType="string"
+            android:defaultValue="@null"
+            app:nullable="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/trendingFragment"
+        android:name="song.vault.ui.trending.TrendingFragment"
+        android:label="Trending">
+        <action
+            android:id="@+id/action_trending_to_post_detail"
+            app:destination="@id/postDetailFragment" />
+    </fragment>
 
 </navigation>

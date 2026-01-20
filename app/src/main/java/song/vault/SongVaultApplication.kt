@@ -26,7 +26,7 @@ class SongVaultApplication : Application() {
     val postRepository: PostRepository by lazy {
         PostRepository(database.postDao(), userRepository)
     }
-    val youTubeRepository: YouTubeRepository by lazy { YouTubeRepository() }
+    val youtubeRepository: YouTubeRepository by lazy { YouTubeRepository(database.postDao()) }
 
     var isYtDlpReady = false
         private set
