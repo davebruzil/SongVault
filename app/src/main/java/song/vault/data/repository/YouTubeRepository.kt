@@ -11,7 +11,7 @@ import kotlinx.coroutines.withContext
 import java.util.UUID
 
 class YouTubeRepository(
-    private val postDao: PostDao
+    private val postDao: PostDao? = null
 ) {
 
     private val apiService = YouTubeClient.apiService

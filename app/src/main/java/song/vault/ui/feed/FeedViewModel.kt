@@ -58,7 +58,7 @@ class FeedViewModel(
     fun deletePost(postId: String) {
         viewModelScope.launch {
             try {
-                postDao.deletePost(postId)
+                postDao.deletePostById(postId)
                 _deleteStatus.value = Resource.Success(Unit)
             } catch (e: Exception) {
                 _deleteStatus.value = Resource.Error(e.message ?: "Unknown error")
