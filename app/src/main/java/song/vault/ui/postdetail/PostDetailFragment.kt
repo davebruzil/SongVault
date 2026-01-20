@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.squareup.picasso.Picasso
@@ -69,7 +70,7 @@ class PostDetailFragment : Fragment() {
                         deleteButton.visibility = if (isOwnPost) View.VISIBLE else View.GONE
 
                         editButton.setOnClickListener {
-                            val action = PostDetailFragmentDirections.actionPostDetailToCreatePost(post.id)
+                            val action = PostDetailFragmentDirections.actionPostDetailFragmentToCreatePostFragment(post.id)
                             findNavController().navigate(action)
                         }
 

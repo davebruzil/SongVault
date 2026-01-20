@@ -91,10 +91,10 @@
         android:name="song.vault.ui.feed.FeedFragment"
         android:label="Feed">
         <action
-            android:id="@+id/action_feed_to_post_detail"
+            android:id="@+id/action_feedFragment_to_postDetailFragment"
             app:destination="@id/postDetailFragment" />
         <action
-            android:id="@+id/action_feed_to_create_post"
+            android:id="@+id/action_feedFragment_to_createPostFragment"
             app:destination="@id/createPostFragment" />
     </fragment>
 
@@ -106,7 +106,7 @@
             android:name="postId"
             app:argType="string" />
         <action
-            android:id="@+id/action_postDetail_to_createPost"
+            android:id="@+id/action_postDetailFragment_to_createPostFragment"
             app:destination="@id/createPostFragment" />
     </fragment>
 
@@ -126,8 +126,11 @@
         android:name="song.vault.ui.trending.TrendingFragment"
         android:label="Trending">
         <action
-            android:id="@+id/action_trending_to_post_detail"
+            android:id="@+id/action_trendingFragment_to_postDetailFragment"
             app:destination="@id/postDetailFragment" />
+        <action
+            android:id="@+id/action_trendingFragment_to_createPostFragment"
+            app:destination="@id/createPostFragment" />
     </fragment>
 
 </navigation>

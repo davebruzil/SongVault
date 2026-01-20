@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import song.vault.SongVaultApplication
@@ -43,11 +44,11 @@ class TrendingFragment : Fragment() {
     private fun setupRecyclerView() {
         adapter = FeedAdapter(
             onPostClick = { post ->
-                val action = TrendingFragmentDirections.actionTrendingToPostDetail(post.id)
+                val action = TrendingFragmentDirections.actionTrendingFragmentToPostDetailFragment(post.id)
                 findNavController().navigate(action)
             },
             onEditClick = { post ->
-                val action = TrendingFragmentDirections.actionTrendingToCreatePost(post.id)
+                val action = TrendingFragmentDirections.actionTrendingFragmentToCreatePostFragment(post.id)
                 findNavController().navigate(action)
             },
             onDeleteClick = { post ->

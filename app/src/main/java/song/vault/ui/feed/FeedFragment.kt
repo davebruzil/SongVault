@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.chip.Chip
@@ -53,11 +54,11 @@ class FeedFragment : Fragment() {
         val currentUserId = SongVaultApplication.currentUser?.uid ?: ""
         adapter = FeedAdapter(
             onPostClick = { post ->
-                val action = FeedFragmentDirections.actionFeedToPostDetail(post.id)
+                val action = FeedFragmentDirections.actionFeedFragmentToPostDetailFragment(post.id)
                 findNavController().navigate(action)
             },
             onEditClick = { post ->
-                val action = FeedFragmentDirections.actionFeedToCreatePost(post.id)
+                val action = FeedFragmentDirections.actionFeedFragmentToCreatePostFragment(post.id)
                 findNavController().navigate(action)
             },
             onDeleteClick = { post ->
