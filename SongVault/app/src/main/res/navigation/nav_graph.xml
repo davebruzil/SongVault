@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/splashFragment">
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="song.vault.ui.splash.SplashFragment"
+        android:label="Splash">
+        <action
+            android:id="@+id/action_splashFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_splashFragment_to_profileFragment"
+            app:destination="@id/profileFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/digital_enter"
+            app:exitAnim="@anim/digital_exit" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="song.vault.ui.auth.LoginFragment"
+        android:label="Login">
+        <action
+            android:id="@+id/action_loginFragment_to_registerFragment"
+            app:destination="@id/registerFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_profileFragment"
+            app:destination="@id/profileFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/digital_enter"
+            app:exitAnim="@anim/digital_exit" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="song.vault.ui.auth.RegisterFragment"
+        android:label="Register">
+        <action
+            android:id="@+id/action_registerFragment_to_profileFragment"
+            app:destination="@id/profileFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/digital_enter"
+            app:exitAnim="@anim/digital_exit" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/feedFragment"
+        android:name="song.vault.ui.feed.FeedFragment"
+        android:label="Feed">
+        <action
+            android:id="@+id/action_feedFragment_to_postDetailFragment"
+            app:destination="@id/postDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/postDetailFragment"
+        android:name="song.vault.ui.post.detail.PostDetailFragment"
+        android:label="Post Detail">
+        <argument
+            android:name="postId"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="song.vault.ui.profile.ProfileFragment"
+        android:label="Profile">
+        <action
+            android:id="@+id/action_profileFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/profileFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_profileFragment_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_myPostsFragment"
+            app:destination="@id/myPostsFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_youtubeSearchFragment"
+            app:destination="@id/youtubeSearchFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_vaultListFragment"
+            app:destination="@id/vaultListFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_feedFragment"
+            app:destination="@id/feedFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_trendingFragment"
+            app:destination="@id/trendingFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="song.vault.ui.profile.EditProfileFragment"
+        android:label="Edit Profile" />
+
+    <fragment
+        android:id="@+id/myPostsFragment"
+        android:name="song.vault.ui.myposts.MyPostsFragment"
+        android:label="My Posts">
+        <action
+            android:id="@+id/action_myPostsFragment_to_postDetailFragment"
+            app:destination="@id/postDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/youtubeSearchFragment"
+        android:name="song.vault.ui.youtube.YouTubeSearchFragment"
+        android:label="Search Songs">
+        <action
+            android:id="@+id/action_youtubeSearchFragment_to_createPostFragment"
+            app:destination="@id/createPostFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/createPostFragment"
+        android:name="song.vault.ui.post.create.CreatePostFragment"
+        android:label="Create Post" />
+
+    <fragment
+        android:id="@+id/trendingFragment"
+        android:name="song.vault.ui.trending.TrendingFragment"
+        android:label="Trending" />
+
+    <fragment
+        android:id="@+id/vaultListFragment"
+        android:name="song.vault.ui.vault.VaultListFragment"
+        android:label="My Vaults">
+        <action
+            android:id="@+id/action_vaultListFragment_to_vaultDetailFragment"
+            app:destination="@id/vaultDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/vaultDetailFragment"
+        android:name="song.vault.ui.vault.VaultDetailFragment"
+        android:label="Vault">
+        <argument
+            android:name="vaultId"
+            app:argType="long" />
+        <argument
+            android:name="vaultName"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_vaultDetailFragment_to_postDetailFragment"
+            app:destination="@id/postDetailFragment" />
+    </fragment>
+
+</navigation>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.SongVault" parent="Theme.Material3.Dark.NoActionBar">
+        <!-- Neon Cyan Primary -->
+        <item name="colorPrimary">@color/neon_cyan</item>
+        <item name="colorOnPrimary">@color/void_black</item>
+        <item name="colorPrimaryContainer">@color/dark_surface</item>
+        <item name="colorOnPrimaryContainer">@color/neon_cyan</item>
+        
+        <!-- Secondary -->
+        <item name="colorSecondary">@color/neon_magenta</item>
+        <item name="colorOnSecondary">@color/void_black</item>
+        <item name="colorSecondaryContainer">@color/dark_surface</item>
+        <item name="colorOnSecondaryContainer">@color/neon_magenta</item>
+
+        <!-- Void Black Backgrounds -->
+        <item name="android:colorBackground">@color/void_black</item>
+        <item name="colorSurface">@color/dark_surface</item>
+        <item name="colorSurfaceVariant">@color/surface_light</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorOnBackground">@color/text_primary</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+
+        <!-- Error -->
+        <item name="colorError">@color/error</item>
+        <item name="colorOnError">@color/void_black</item>
+        <item name="colorErrorContainer">@color/dark_surface</item>
+        <item name="colorOnErrorContainer">@color/error</item>
+
+        <!-- Outline -->
+        <item name="colorOutline">@color/border_default</item>
+        <item name="colorOutlineVariant">@color/border_default</item>
+
+        <!-- System Bars -->
+        <item name="android:statusBarColor">@color/void_black</item>
+        <item name="android:navigationBarColor">@color/void_black</item>
+        <item name="android:windowBackground">@color/void_black</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+
+        <!-- Component Styles -->
+        <item name="materialButtonStyle">@style/Widget.SongVault.Button</item>
+        <item name="textInputStyle">@style/Widget.SongVault.TextInput</item>
+    </style>
+
+    <!-- Text-Only Button - Clean Minimalist -->
+    <style name="Widget.SongVault.Button" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textAllCaps">false</item>
+        <item name="android:letterSpacing">0.02</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="backgroundTint">@android:color/transparent</item>
+        <item name="rippleColor">@color/ripple_white</item>
+        <item name="android:paddingStart">0dp</item>
+        <item name="android:paddingEnd">0dp</item>
+    </style>
+
+    <!-- Text-Only Outlined - Same as primary -->
+    <style name="Widget.SongVault.Button.Outlined" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textAllCaps">false</item>
+        <item name="android:letterSpacing">0.02</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="backgroundTint">@android:color/transparent</item>
+        <item name="rippleColor">@color/ripple_white</item>
+    </style>
+
+    <!-- Text-Only Logout -->
+    <style name="Widget.SongVault.Button.Danger" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textAllCaps">false</item>
+        <item name="android:letterSpacing">0.02</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="backgroundTint">@android:color/transparent</item>
+        <item name="rippleColor">@color/ripple_white</item>
+    </style>
+
+    <!-- Text Input - Terminal Style -->
+    <style name="Widget.SongVault.TextInput" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/text_input_stroke_color</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxCornerRadiusTopStart">4dp</item>
+        <item name="boxCornerRadiusTopEnd">4dp</item>
+        <item name="boxCornerRadiusBottomStart">4dp</item>
+        <item name="boxCornerRadiusBottomEnd">4dp</item>
+        <item name="boxBackgroundColor">@color/deep_black</item>
+        <item name="hintTextColor">@color/text_muted</item>
+        <item name="android:textColorHint">@color/text_muted</item>
+    </style>
+
+    <!-- Sharp corners for cards -->
+    <style name="RoundedCorner" parent="">
+        <item name="cornerSize">4dp</item>
+    </style>
+
+    <style name="CircleImageView" parent="">
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <!-- Clean Title Text -->
+    <style name="TextAppearance.SongVault.Title" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:letterSpacing">0.02</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+</resources>

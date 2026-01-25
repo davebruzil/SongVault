@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Basic Colors -->
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="gray">#808080</color>
+    <color name="cyan">#00FFFF</color>
+
+    <!-- Minimalist Dark - Pure Black & White -->
+
+    <!-- Backgrounds -->
+    <color name="void_black">#000000</color>
+    <color name="deep_black">#000000</color>
+    <color name="dark_bg">#000000</color>
+    <color name="dark_surface">#000000</color>
+    <color name="dark_card">#000000</color>
+    <color name="surface_light">#0A0A0A</color>
+    <color name="border_default">#1A1A1A</color>
+
+    <!-- Accents - Gold & White -->
+    <color name="neon_cyan">#FFFFFF</color>
+    <color name="neon_magenta">#FFFFFF</color>
+    <color name="accent">#D4AF37</color>
+    <color name="accent_gold">#D4AF37</color>
+    <color name="accent_gold_light">#E8C252</color>
+    <color name="accent_variant">#B0B0B0</color>
+    <color name="secondary">#FFFFFF</color>
+    <color name="toxic_green">#FFFFFF</color>
+
+    <!-- Text -->
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#707070</color>
+    <color name="text_muted">#404040</color>
+
+    <!-- Functional - White -->
+    <color name="error">#FFFFFF</color>
+    <color name="warning">#FFFFFF</color>
+    <color name="success">#FFFFFF</color>
+
+    <!-- Ripple -->
+    <color name="glow_cyan">#20FFFFFF</color>
+    <color name="glow_magenta">#20FFFFFF</color>
+    <color name="ripple_white">#15FFFFFF</color>
+    <color name="ripple_gold">#30D4AF37</color>
+</resources>
