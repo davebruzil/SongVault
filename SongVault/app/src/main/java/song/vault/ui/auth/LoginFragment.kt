@@ -84,7 +84,7 @@ class LoginFragment : Fragment() {
                     binding.progressBar.visibility = View.GONE
                     binding.btnLogin.isEnabled = true
                     binding.btnGoogleSignIn.isEnabled = true
-                    findNavController().navigate(R.id.action_loginFragment_to_profileFragment)
+                    findNavController().navigate(R.id.action_loginFragment_to_menuFragment)
                 }
                 is AuthState.Error -> {
                     binding.progressBar.visibility = View.GONE

@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import song.vault.R
 import song.vault.SongVaultApplication
 import song.vault.databinding.FragmentMyPostsBinding
 
@@ -109,6 +110,10 @@ class MyPostsFragment : Fragment() {
 
         binding.toolbar.setNavigationOnClickListener {
             findNavController().navigateUp()
+        }
+
+        binding.fabAddPost.setOnClickListener {
+            findNavController().navigate(R.id.action_myPostsFragment_to_youtubeSearchFragment)
         }
     }
 

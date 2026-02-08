@@ -49,4 +49,18 @@
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddPost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="20dp"
+        android:contentDescription="Add post"
+        app:srcCompat="@android:drawable/ic_input_add"
+        app:backgroundTint="@color/white"
+        app:tint="@color/void_black"
+        app:layout_anchor="@id/swipeRefresh"
+        app:layout_anchorGravity="bottom|end"
+        app:useCompatPadding="true" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

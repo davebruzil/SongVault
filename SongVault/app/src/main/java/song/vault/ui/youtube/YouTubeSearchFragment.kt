@@ -25,10 +25,12 @@ import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.navigation.fragment.findNavController
+import song.vault.R
 import song.vault.SongVaultApplication
 import song.vault.data.remote.youtube.YouTubeVideo
 import song.vault.databinding.FragmentYoutubeSearchBinding
 import song.vault.ui.vault.AddToVaultDialog
+import song.vault.ui.post.create.CreatePostFragment
 import song.vault.util.AudioExtractor
 import song.vault.util.Resource
 import kotlinx.coroutines.Job
@@ -214,9 +216,14 @@ class YouTubeSearchFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        adapter = YouTubeVideoAdapter { video ->
-            viewModel.selectVideo(video)
-        }
+        adapter = YouTubeVideoAdapter(
+            onVideoClick = { video ->
+                viewModel.selectVideo(video)
+            },
+            onPostClick = { video ->
+                navigateToCreatePost(video)
+            }
+        )
         binding.rvVideos.adapter = adapter
     }
 
@@ -255,6 +262,20 @@ class YouTubeSearchFragment : Fragment() {
         AddToVaultDialog.newInstance(video) {
             Toast.makeText(context, "Song saved to vault!", Toast.LENGTH_SHORT).show()
         }.show(childFragmentManager, "add_to_vault")
+    }
+
+    private fun navigateToCreatePost(video: YouTubeVideo) {
+        val bundle = Bundle().apply {
+            putString(CreatePostFragment.ARG_VIDEO_ID, video.videoId)
+            putString(CreatePostFragment.ARG_TITLE, video.title)
+            putString(CreatePostFragment.ARG_ARTIST, video.channelName)
+            putString(CreatePostFragment.ARG_THUMBNAIL_URL, video.thumbnailUrl)
+        }
+
+        findNavController().navigate(
+            R.id.action_youtubeSearchFragment_to_createPostFragment,
+            bundle
+        )
     }
 
     private fun setupPlayerControls() {

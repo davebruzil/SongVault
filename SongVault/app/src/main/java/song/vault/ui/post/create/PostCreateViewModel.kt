@@ -35,6 +35,11 @@ class PostCreateViewModel(
     private val _validationErrors = MutableLiveData<Map<String, String>>(emptyMap())
     val validationErrors: LiveData<Map<String, String>> = _validationErrors
 
+    fun setPrefilledVideo(video: YouTubeVideo) {
+        _musicMetadata.value = video
+        _autoFetchState.value = AutoFetchState.Success
+    }
+
     fun autoFetchMetadata(musicLink: String) {
         _autoFetchState.value = AutoFetchState.Loading
 

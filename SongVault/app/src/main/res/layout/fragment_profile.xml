@@ -1,203 +1,165 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     android:background="@color/void_black">
 
-    <!-- Hidden views for data binding compatibility -->
-    <ImageView
-        android:id="@+id/ivProfileImage"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/tvDisplayName"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/tvEmail"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <!-- Logo - One Line -->
-    <TextView
-        android:id="@+id/tvLogo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SONG VAULT"
-        android:textSize="36sp"
-        android:textStyle="bold"
-        android:fontFamily="monospace"
-        android:textColor="@color/white"
-        android:letterSpacing="0.15"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/menuSection"
-        app:layout_constraintVertical_bias="0.5" />
-
-    <!-- Menu Section -->
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/menuSection"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@+id/tvLogo"
-        app:layout_constraintBottom_toTopOf="@+id/btnLogout"
-        app:layout_constraintHeight_percent="0.70">
+        android:layout_height="wrap_content"
+        android:padding="24dp">
 
-        <!-- Vertical Chain of Menu Items -->
         <TextView
-            android:id="@+id/btnSearchSongs"
+            android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="[ SEARCH SONGS ]"
-            android:textSize="17sp"
+            android:text="Profile"
+            android:textSize="24sp"
             android:textStyle="bold"
-            android:fontFamily="monospace"
             android:textColor="@color/white"
-            android:letterSpacing="0.12"
-            android:paddingVertical="18dp"
-            android:paddingHorizontal="28dp"
-            android:background="@android:color/transparent"
-            android:clickable="true"
-            android:focusable="true"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/btnFeed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivProfileImage"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="16dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_profile_placeholder"
+            android:contentDescription="Profile image"
+            app:shapeAppearanceOverlay="@style/CircleImageView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+
+        <TextView
+            android:id="@+id/tvDisplayName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="User"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/ivProfileImage"
+            app:layout_constraintTop_toTopOf="@+id/ivProfileImage"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/tvEmail"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="6dp"
+            android:textColor="@color/text_muted"
+            android:textSize="13sp"
+            app:layout_constraintStart_toEndOf="@+id/ivProfileImage"
+            app:layout_constraintTop_toBottomOf="@+id/tvDisplayName"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEditProfile"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Edit Profile"
+            android:layout_marginTop="12dp"
+            app:layout_constraintStart_toEndOf="@+id/ivProfileImage"
+            app:layout_constraintTop_toBottomOf="@+id/tvEmail" />
+
+        <TextView
+            android:id="@+id/tvFavoriteGenreLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Favorite Genre"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivProfileImage" />
+
+        <TextView
+            android:id="@+id/tvFavoriteGenreValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textColor="@color/text_muted"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintVertical_chainStyle="spread" />
+            app:layout_constraintTop_toBottomOf="@+id/tvFavoriteGenreLabel" />
 
         <TextView
-            android:id="@+id/btnFeed"
+            android:id="@+id/tvFavoriteSongLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="[ FEED ]"
-            android:textSize="17sp"
+            android:layout_marginTop="16dp"
+            android:text="Favorite Song"
             android:textStyle="bold"
-            android:fontFamily="monospace"
             android:textColor="@color/white"
-            android:letterSpacing="0.12"
-            android:paddingVertical="18dp"
-            android:paddingHorizontal="28dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvFavoriteGenreValue" />
+
+        <TextView
+            android:id="@+id/tvFavoriteSongValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textColor="@color/text_muted"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvFavoriteSongLabel" />
+
+        <TextView
+            android:id="@+id/tvBioLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="About Me"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvFavoriteSongValue" />
+
+        <TextView
+            android:id="@+id/tvBioValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textColor="@color/text_muted"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvBioLabel" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnVaults"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Vaults"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvBioValue" />
+
+        <TextView
+            android:id="@+id/btnLogout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:gravity="center"
+            android:text="[ LOGOUT ]"
+            android:textSize="13sp"
+            android:fontFamily="monospace"
+            android:textColor="@color/text_muted"
+            android:letterSpacing="0.1"
+            android:paddingHorizontal="32dp"
             android:background="@android:color/transparent"
             android:clickable="true"
             android:focusable="true"
-            app:layout_constraintTop_toBottomOf="@+id/btnSearchSongs"
-            app:layout_constraintBottom_toTopOf="@+id/btnTrending"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/btnTrending"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="[ TRENDING ]"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            android:fontFamily="monospace"
-            android:textColor="@color/white"
-            android:letterSpacing="0.12"
-            android:paddingVertical="18dp"
-            android:paddingHorizontal="28dp"
-            android:background="@android:color/transparent"
-            android:clickable="true"
-            android:focusable="true"
-            app:layout_constraintTop_toBottomOf="@+id/btnFeed"
-            app:layout_constraintBottom_toTopOf="@+id/btnEditProfile"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/btnEditProfile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="[ EDIT PROFILE ]"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            android:fontFamily="monospace"
-            android:textColor="@color/white"
-            android:letterSpacing="0.12"
-            android:paddingVertical="18dp"
-            android:paddingHorizontal="28dp"
-            android:background="@android:color/transparent"
-            android:clickable="true"
-            android:focusable="true"
-            app:layout_constraintTop_toBottomOf="@+id/btnTrending"
-            app:layout_constraintBottom_toTopOf="@+id/btnMyPosts"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/btnMyPosts"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="[ MY POSTS ]"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            android:fontFamily="monospace"
-            android:textColor="@color/white"
-            android:letterSpacing="0.12"
-            android:paddingVertical="18dp"
-            android:paddingHorizontal="28dp"
-            android:background="@android:color/transparent"
-            android:clickable="true"
-            android:focusable="true"
-            app:layout_constraintTop_toBottomOf="@+id/btnEditProfile"
-            app:layout_constraintBottom_toTopOf="@+id/btnMyVaults"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/btnMyVaults"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="[ MY VAULTS ]"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            android:fontFamily="monospace"
-            android:textColor="@color/white"
-            android:letterSpacing="0.12"
-            android:paddingVertical="18dp"
-            android:paddingHorizontal="28dp"
-            android:background="@android:color/transparent"
-            android:clickable="true"
-            android:focusable="true"
-            app:layout_constraintTop_toBottomOf="@+id/btnMyPosts"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/btnVaults" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Logout -->
-    <TextView
-        android:id="@+id/btnLogout"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:gravity="center"
-        android:text="[ LOGOUT ]"
-        android:textSize="13sp"
-        android:fontFamily="monospace"
-        android:textColor="@color/text_muted"
-        android:letterSpacing="0.1"
-        android:paddingHorizontal="32dp"
-        android:background="@android:color/transparent"
-        android:clickable="true"
-        android:focusable="true"
-        app:layout_constraintHeight_percent="0.10"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

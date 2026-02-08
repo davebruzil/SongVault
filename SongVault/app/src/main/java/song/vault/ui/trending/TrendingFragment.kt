@@ -52,6 +52,10 @@ class TrendingFragment : Fragment() {
             onVideoClick = { video ->
                 // TODO: Navigate to create post with this video
                 Snackbar.make(binding.root, "Creating post from trending: ${video.title}", Snackbar.LENGTH_SHORT).show()
+            },
+            onPostClick = { video ->
+                // TODO: Navigate to create post with this video
+                Snackbar.make(binding.root, "Creating post from trending: ${video.title}", Snackbar.LENGTH_SHORT).show()
             }
         )
 
