@@ -18,6 +18,16 @@ interface UserDao {
     @Query("UPDATE users SET isCurrentUser = 0")
     suspend fun clearCurrentUser()
 
-    @Query("UPDATE users SET displayName = :displayName, profileImageUrl = :profileImageUrl, updatedAt = :updatedAt WHERE uid = :uid")
-    suspend fun updateProfile(uid: String, displayName: String?, profileImageUrl: String?, updatedAt: Long = System.currentTimeMillis())
+    @Query(
+        "UPDATE users SET displayName = :displayName, profileImageUrl = :profileImageUrl, favoriteGenre = :favoriteGenre, favoriteSong = :favoriteSong, bio = :bio, updatedAt = :updatedAt WHERE uid = :uid"
+    )
+    suspend fun updateProfile(
+        uid: String,
+        displayName: String?,
+        profileImageUrl: String?,
+        favoriteGenre: String?,
+        favoriteSong: String?,
+        bio: String?,
+        updatedAt: Long = System.currentTimeMillis()
+    )
 }

@@ -14,6 +14,7 @@ import song.vault.SongVaultApplication
 import song.vault.databinding.FragmentCreatePostBinding
 import song.vault.ui.feed.GenreFilterBottomSheet
 import song.vault.data.remote.youtube.N8nClient
+import song.vault.data.remote.youtube.YouTubeVideo
 
 class CreatePostFragment : Fragment() {
 
@@ -28,6 +29,13 @@ class CreatePostFragment : Fragment() {
 
     private var selectedGenre: String? = null
 
+    companion object {
+        const val ARG_VIDEO_ID = "arg_video_id"
+        const val ARG_TITLE = "arg_title"
+        const val ARG_ARTIST = "arg_artist"
+        const val ARG_THUMBNAIL_URL = "arg_thumbnail_url"
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -40,8 +48,54 @@ class CreatePostFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if (savedInstanceState == null) {
+            applyPrefillFromArgs()
+        }
+
         setupListeners()
         setupObservers()
+    }
+
+    private fun applyPrefillFromArgs() {
+        val args = arguments ?: return
+
+        val videoId = args.getString(ARG_VIDEO_ID)
+        val title = args.getString(ARG_TITLE)
+        val artist = args.getString(ARG_ARTIST)
+        val thumbnailUrl = args.getString(ARG_THUMBNAIL_URL)
+
+        if (!title.isNullOrBlank()) {
+            binding.etMusicTitle.setText(title)
+        }
+
+        if (!artist.isNullOrBlank()) {
+            binding.etMusicArtist.setText(artist)
+        }
+
+        if (!videoId.isNullOrBlank()) {
+            val link = "https://www.youtube.com/watch?v=$videoId"
+            binding.etMusicLink.setText(link)
+        }
+
+        if (!thumbnailUrl.isNullOrBlank()) {
+            Picasso.get()
+                .load(thumbnailUrl)
+                .placeholder(R.drawable.ic_launcher_background)
+                .into(binding.ivThumbnail)
+            binding.ivThumbnail.visibility = View.VISIBLE
+        }
+
+        if (!videoId.isNullOrBlank() && !title.isNullOrBlank() && !artist.isNullOrBlank()) {
+            createViewModel.setPrefilledVideo(
+                YouTubeVideo(
+                    videoId = videoId,
+                    title = title,
+                    thumbnailUrl = thumbnailUrl ?: "",
+                    channelName = artist,
+                    description = ""
+                )
+            )
+        }
     }
 
     private fun setupListeners() {

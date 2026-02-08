@@ -57,6 +57,10 @@ class EditProfileFragment : Fragment() {
         profileViewModel.currentUser.observe(viewLifecycleOwner) { user ->
             user?.let {
                 binding.etDisplayName.setText(it.displayName ?: "")
+                binding.tvEmailValue.text = it.email
+                binding.etFavoriteGenre.setText(it.favoriteGenre ?: "")
+                binding.etFavoriteSong.setText(it.favoriteSong ?: "")
+                binding.etBio.setText(it.bio ?: "")
 
                 it.profileImageUrl?.let { url ->
                     Picasso.get()
@@ -102,7 +106,17 @@ class EditProfileFragment : Fragment() {
 
         binding.btnSave.setOnClickListener {
             val displayName = binding.etDisplayName.text.toString().trim()
-            profileViewModel.updateProfileWithImage(displayName, selectedImageUri)
+            val favoriteGenre = binding.etFavoriteGenre.text.toString().trim().ifBlank { null }
+            val favoriteSong = binding.etFavoriteSong.text.toString().trim().ifBlank { null }
+            val bio = binding.etBio.text.toString().trim().ifBlank { null }
+
+            profileViewModel.updateProfileWithImage(
+                displayName = displayName,
+                imageUri = selectedImageUri,
+                favoriteGenre = favoriteGenre,
+                favoriteSong = favoriteSong,
+                bio = bio
+            )
         }
 
         binding.btnCancel.setOnClickListener {

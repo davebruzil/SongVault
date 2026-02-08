@@ -47,7 +47,7 @@ class RegisterFragment : Fragment() {
                 is AuthState.Success -> {
                     binding.progressBar.visibility = View.GONE
                     binding.btnRegister.isEnabled = true
-                    findNavController().navigate(R.id.action_registerFragment_to_profileFragment)
+                    findNavController().navigate(R.id.action_registerFragment_to_menuFragment)
                 }
                 is AuthState.Error -> {
                     binding.progressBar.visibility = View.GONE

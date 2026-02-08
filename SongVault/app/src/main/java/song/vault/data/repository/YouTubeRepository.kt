@@ -5,6 +5,8 @@ import song.vault.data.remote.youtube.YouTubeClient
 import song.vault.data.remote.youtube.YouTubeVideo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import retrofit2.HttpException
+import android.util.Log
 
 class YouTubeRepository {
 
@@ -12,10 +14,18 @@ class YouTubeRepository {
 
     private val apiKey = BuildConfig.YOUTUBE_API_KEY
 
+    init {
+        if (apiKey.isEmpty()) {
+            Log.e("YouTubeRepository", "⚠️ YOUTUBE_API_KEY is EMPTY. Search will fail with HTTP 403. Check local.properties.")
+        }
+    }
+
     /**
      * Search for songs - appends "song" for general searches
      */
     suspend fun searchSongs(query: String): Result<List<YouTubeVideo>> {
+        if (apiKey.isEmpty()) return Result.failure(Exception("YouTube API Key is missing"))
+        
         return withContext(Dispatchers.IO) {
             try {
                 val response = apiService.searchSongs(
@@ -24,8 +34,16 @@ class YouTubeRepository {
                 )
                 val videos = response.items.map { YouTubeVideo.fromSearchItem(it) }
                 Result.success(videos)
+            } catch (e: HttpException) {
+                val errorBody = e.response()?.errorBody()?.string()
+                Log.e(
+                    "YouTubeRepository",
+                    "searchSongs HTTP ${e.code()} error: ${e.message()} | body=${errorBody}",
+                    e
+                )
+                Result.failure(e)
             } catch (e: Exception) {
-                android.util.Log.e("YouTubeRepository", "searchSongs failed: ${e.message}", e)
+                Log.e("YouTubeRepository", "searchSongs failed: ${e.message}", e)
                 Result.failure(e)
             }
         }
@@ -36,21 +54,31 @@ class YouTubeRepository {
      * Adds "band official" to get actual band music, not movie soundtracks
      */
     suspend fun searchArtist(artistName: String): Result<List<YouTubeVideo>> {
+        if (apiKey.isEmpty()) return Result.failure(Exception("YouTube API Key is missing"))
+
         return withContext(Dispatchers.IO) {
             try {
                 // Add "band official" to prioritize actual bands over movies/shows with same name
                 val searchQuery = "$artistName band official"
-                android.util.Log.d("YouTubeRepository", "Searching artist: $searchQuery")
+                Log.d("YouTubeRepository", "Searching artist: $searchQuery")
 
                 val response = apiService.searchSongs(
                     query = searchQuery,
                     apiKey = apiKey
                 )
                 val videos = response.items.map { YouTubeVideo.fromSearchItem(it) }
-                android.util.Log.d("YouTubeRepository", "Found ${videos.size} videos for $artistName")
+                Log.d("YouTubeRepository", "Found ${videos.size} videos for $artistName")
                 Result.success(videos)
+            } catch (e: HttpException) {
+                val errorBody = e.response()?.errorBody()?.string()
+                Log.e(
+                    "YouTubeRepository",
+                    "searchArtist HTTP ${e.code()} error: ${e.message()} | body=${errorBody}",
+                    e
+                )
+                Result.failure(e)
             } catch (e: Exception) {
-                android.util.Log.e("YouTubeRepository", "searchArtist failed for '$artistName': ${e.message}", e)
+                Log.e("YouTubeRepository", "searchArtist failed for '$artistName': ${e.message}", e)
                 Result.failure(e)
             }
         }
@@ -61,6 +89,8 @@ class YouTubeRepository {
         maxResults: Int = 20,
         pageToken: String? = null
     ): Result<Pair<List<YouTubeVideo>, String?>> {
+        if (apiKey.isEmpty()) return Result.failure(Exception("YouTube API Key is missing"))
+
         return withContext(Dispatchers.IO) {
             try {
                 val response = apiService.searchVideos(
@@ -71,6 +101,14 @@ class YouTubeRepository {
                 )
                 val videos = response.items.map { YouTubeVideo.fromSearchItem(it) }
                 Result.success(Pair(videos, response.nextPageToken))
+            } catch (e: HttpException) {
+                val errorBody = e.response()?.errorBody()?.string()
+                Log.e(
+                    "YouTubeRepository",
+                    "searchVideos HTTP ${e.code()} error: ${e.message()} | body=${errorBody}",
+                    e
+                )
+                Result.failure(e)
             } catch (e: Exception) {
                 Result.failure(e)
             }

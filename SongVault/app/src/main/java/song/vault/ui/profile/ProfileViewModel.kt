@@ -32,11 +32,23 @@ class ProfileViewModel(
         }
     }
 
-    fun updateProfile(displayName: String?, profileImageUrl: String?) {
+    fun updateProfile(
+        displayName: String?,
+        profileImageUrl: String?,
+        favoriteGenre: String?,
+        favoriteSong: String?,
+        bio: String?
+    ) {
         _updateState.value = ProfileUpdateState.Loading
 
         viewModelScope.launch {
-            when (val result = userRepository.updateProfile(displayName, profileImageUrl)) {
+            when (val result = userRepository.updateProfile(
+                displayName,
+                profileImageUrl,
+                favoriteGenre,
+                favoriteSong,
+                bio
+            )) {
                 is Resource.Success -> _updateState.value = ProfileUpdateState.Success
                 is Resource.Error -> _updateState.value = ProfileUpdateState.Error(result.message)
                 is Resource.Loading -> _updateState.value = ProfileUpdateState.Loading
@@ -44,7 +56,13 @@ class ProfileViewModel(
         }
     }
 
-    fun updateProfileWithImage(displayName: String?, imageUri: Uri?) {
+    fun updateProfileWithImage(
+        displayName: String?,
+        imageUri: Uri?,
+        favoriteGenre: String?,
+        favoriteSong: String?,
+        bio: String?
+    ) {
         _updateState.value = ProfileUpdateState.Loading
 
         viewModelScope.launch {
@@ -54,7 +72,13 @@ class ProfileViewModel(
                     is Resource.Success -> {
                         // Image uploaded, now update profile with the URL
                         val imageUrl = uploadResult.data
-                        when (val result = userRepository.updateProfile(displayName, imageUrl)) {
+                        when (val result = userRepository.updateProfile(
+                            displayName,
+                            imageUrl,
+                            favoriteGenre,
+                            favoriteSong,
+                            bio
+                        )) {
                             is Resource.Success -> _updateState.value = ProfileUpdateState.Success
                             is Resource.Error -> _updateState.value = ProfileUpdateState.Error(result.message)
                             is Resource.Loading -> _updateState.value = ProfileUpdateState.Loading
@@ -65,7 +89,13 @@ class ProfileViewModel(
                 }
             } else {
                 // No image, just update display name
-                when (val result = userRepository.updateProfile(displayName, null)) {
+                when (val result = userRepository.updateProfile(
+                    displayName,
+                    null,
+                    favoriteGenre,
+                    favoriteSong,
+                    bio
+                )) {
                     is Resource.Success -> _updateState.value = ProfileUpdateState.Success
                     is Resource.Error -> _updateState.value = ProfileUpdateState.Error(result.message)
                     is Resource.Loading -> _updateState.value = ProfileUpdateState.Loading

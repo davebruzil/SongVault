@@ -2,15 +2,11 @@ package song.vault.ui.profile
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.squareup.picasso.Picasso
 import song.vault.MainActivity
@@ -50,6 +46,9 @@ class ProfileFragment : Fragment() {
             user?.let {
                 binding.tvDisplayName.text = it.displayName ?: "User"
                 binding.tvEmail.text = it.email
+                binding.tvFavoriteGenreValue.text = it.favoriteGenre ?: "—"
+                binding.tvFavoriteSongValue.text = it.favoriteSong ?: "—"
+                binding.tvBioValue.text = it.bio ?: "—"
 
                 if (!it.profileImageUrl.isNullOrEmpty()) {
                     Picasso.get()
@@ -64,55 +63,23 @@ class ProfileFragment : Fragment() {
     }
 
     private fun setupClickListeners() {
-        binding.btnEditProfile.setOnClickListener { view ->
-            animateAndNavigate(view, R.id.action_profileFragment_to_editProfileFragment)
+        binding.btnEditProfile.setOnClickListener {
+            findNavController().navigate(R.id.action_profileFragment_to_editProfileFragment)
         }
 
-        binding.btnMyPosts.setOnClickListener { view ->
-            animateAndNavigate(view, R.id.action_profileFragment_to_myPostsFragment)
+        binding.btnVaults.setOnClickListener {
+            findNavController().navigate(R.id.action_profileFragment_to_vaultListFragment)
         }
 
-        binding.btnSearchSongs.setOnClickListener { view ->
-            animateAndNavigate(view, R.id.action_profileFragment_to_youtubeSearchFragment)
-        }
-
-        binding.btnFeed.setOnClickListener { view ->
-            animateAndNavigate(view, R.id.action_profileFragment_to_feedFragment)
-        }
-
-        binding.btnTrending.setOnClickListener { view ->
-            animateAndNavigate(view, R.id.action_profileFragment_to_trendingFragment)
-        }
-
-        binding.btnMyVaults.setOnClickListener { view ->
-            animateAndNavigate(view, R.id.action_profileFragment_to_vaultListFragment)
-        }
-
-        binding.btnLogout.setOnClickListener { view ->
-            playDigitalAnimation(view) {
-                profileViewModel.logout()
-                activity?.let { currentActivity ->
-                    val intent = Intent(currentActivity, MainActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
-                    currentActivity.finish()
-                }
+        binding.btnLogout.setOnClickListener {
+            profileViewModel.logout()
+            activity?.let { currentActivity ->
+                val intent = Intent(currentActivity, MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                currentActivity.finish()
             }
         }
-    }
-
-    private fun animateAndNavigate(view: View, destinationId: Int) {
-        playDigitalAnimation(view) {
-            findNavController().navigate(destinationId)
-        }
-    }
-
-    private fun playDigitalAnimation(view: View, onComplete: () -> Unit) {
-        val animation = AnimationUtils.loadAnimation(requireContext(), R.anim.digital_press)
-        view.startAnimation(animation)
-        Handler(Looper.getMainLooper()).postDelayed({
-            onComplete()
-        }, 200)
     }
 
     override fun onDestroyView() {

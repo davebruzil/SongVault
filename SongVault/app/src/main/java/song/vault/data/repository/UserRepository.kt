@@ -67,10 +67,22 @@ class UserRepository(
 
                 val displayName = firestoreData?.getString("displayName") ?: user.displayName
                 val profileImageUrl = firestoreData?.getString("profileImageUrl") ?: user.photoUrl?.toString()
+                val favoriteGenre = firestoreData?.getString("favoriteGenre")
+                val favoriteSong = firestoreData?.getString("favoriteSong")
+                val bio = firestoreData?.getString("bio")
 
                 Log.d("UserRepository", "Login - using profileImageUrl: $profileImageUrl")
 
-                val entity = UserEntity(user.uid, email, displayName, profileImageUrl, true)
+                val entity = UserEntity(
+                    user.uid,
+                    email,
+                    displayName,
+                    profileImageUrl,
+                    favoriteGenre,
+                    favoriteSong,
+                    bio,
+                    true
+                )
                 userDao.clearCurrentUser()
                 userDao.insertUser(entity)
                 Resource.Success(entity)
@@ -84,7 +96,7 @@ class UserRepository(
         return when (val result = authSource.register(email, password, displayName)) {
             is Resource.Success -> {
                 val user = result.data
-                val entity = UserEntity(user.uid, email, displayName, null, true)
+                val entity = UserEntity(user.uid, email, displayName, null, null, null, null, true)
                 userDao.clearCurrentUser()
                 userDao.insertUser(entity)
                 Resource.Success(entity)
@@ -110,6 +122,9 @@ class UserRepository(
                 // Use Firestore data if available, otherwise use Google profile data
                 val displayName = firestoreData?.getString("displayName") ?: user.displayName
                 val profileImageUrl = firestoreData?.getString("profileImageUrl") ?: user.photoUrl?.toString()
+                val favoriteGenre = firestoreData?.getString("favoriteGenre")
+                val favoriteSong = firestoreData?.getString("favoriteSong")
+                val bio = firestoreData?.getString("bio")
 
                 Log.d("UserRepository", "Google sign-in - profileImageUrl from Firestore: $profileImageUrl")
 
@@ -118,6 +133,9 @@ class UserRepository(
                     user.email ?: "",
                     displayName,
                     profileImageUrl,
+                    favoriteGenre,
+                    favoriteSong,
+                    bio,
                     true
                 )
                 userDao.clearCurrentUser()
@@ -134,19 +152,28 @@ class UserRepository(
         authSource.logout()
     }
 
-    suspend fun updateProfile(displayName: String?, profileImageUrl: String?): Resource<Unit> {
+    suspend fun updateProfile(
+        displayName: String?,
+        profileImageUrl: String?,
+        favoriteGenre: String?,
+        favoriteSong: String?,
+        bio: String?
+    ): Resource<Unit> {
         val uid = currentFirebaseUser?.uid ?: return Resource.Error("Not logged in")
 
         Log.d("UserRepository", "Updating profile - displayName: $displayName, imageUrl: $profileImageUrl")
 
         // Save to local Room DB
-        userDao.updateProfile(uid, displayName, profileImageUrl)
+        userDao.updateProfile(uid, displayName, profileImageUrl, favoriteGenre, favoriteSong, bio)
 
         // Save to Firestore so it persists across logins
         try {
             val data = mutableMapOf<String, Any>("uid" to uid)
             displayName?.let { data["displayName"] = it }
             profileImageUrl?.let { data["profileImageUrl"] = it }
+            favoriteGenre?.let { data["favoriteGenre"] = it }
+            favoriteSong?.let { data["favoriteSong"] = it }
+            bio?.let { data["bio"] = it }
 
             // Use set with merge to create or update the document
             firestore.collection("users").document(uid)

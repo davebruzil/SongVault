@@ -11,7 +11,8 @@ import song.vault.data.remote.youtube.YouTubeVideo
 import song.vault.databinding.ItemYoutubeVideoBinding
 
 class YouTubeVideoAdapter(
-    private val onVideoClick: (YouTubeVideo) -> Unit
+    private val onVideoClick: (YouTubeVideo) -> Unit,
+    private val onPostClick: (YouTubeVideo) -> Unit
 ) : ListAdapter<YouTubeVideo, YouTubeVideoAdapter.VideoViewHolder>(VideoDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoViewHolder {
@@ -44,6 +45,10 @@ class YouTubeVideoAdapter(
 
                 root.setOnClickListener {
                     onVideoClick(video)
+                }
+
+                btnPost.setOnClickListener {
+                    onPostClick(video)
                 }
             }
         }
